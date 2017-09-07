@@ -1,0 +1,19 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree_tags %}
+
+{% block title %}
+    Your Payment
+{% endblock %}
+
+{% block content %}
+
+<p> You have now completed this study. Thank you very much for your participation!</p>
+
+
+
+<p> Your guaranteed total compensation for this study is at least <b> {{paymentTotal}} </b>. {% if positiveBonus %} This includes your HIT reward of {{Constants.HIT}} and your extra bonus for your dice throw of {{payoff}}. {% else %} This is equal to your HIT fee. {% endif %} We will now examine the data and may reward you an additional bonus if your median guess was correct!</p> 
+
+
+<p> We will pay you your entire bonus and HIT reward as soon as possible. Please do not hesitate to contact us about any questions or concerns or any other feedback about this study. Also, if you enjoyed this study, please feel free to give us a positive rating on <a href="https://turkopticon.ucsd.edu/" target="_blank"> Turkopticon</a>. </p>
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree_tags %}
+{% load mathfilters %}
+
+{% block title %}
+What is the sum of your dice throws?
+{% endblock %}
+
+{% block content %}
+
+
+<p> Please report the exact sum of your ten dice throws below:</p>
+
+{% formfield player.report with label="The sum of my ten dice throws is"  %}
+
+<p> (If you haven't thrown the dice yet or have no dice available to you right now, feel free to use <a href="https://www.random.org/dice/?num=10" target="_blank"> this website</a>. Feel free to experiment with the software to see that it is a fair dice throw - but remember to report your first throw!)</p>
+
+<p> Recall that your payment will depend on your report in the following way: </p>
+
+ <table class="table1" align = "center">
+  <tr>
+    <th>Sum of Dice</th>
+    <th>Bonus</th>
+  </tr>
+  {% for i in Constants.thresholds%}  <tr>
+    {% if not forloop.last %} 
+    <td> Sum smaller than or equal to  {{i}}: </td>
+    <td>{{forloop.counter0|mul:BonusShare}} </td>
+   {% else %} 
+     <td> Sum strictly larger than {{i}}: </td>
+     <td>{{forloop.counter|mul:BonusShare}} </td>
+   {% endif %}
+  </tr>
+  {% endfor %}
+</table> 
+
+
+
+<p> What is the MEDIAN sum YOU BELIEVE others (excluding you) will have thrown? </p>
+	
+    {% formfield player.belief with label="I think the median of all other workers' throws is"  %}
+
+
+    {% next_button %}
+
+{% endblock %}
+
+
+{% block styles %}
+
+ <style type="text/css">
+ table.table1 {
+     border: 1px solid black;
+     background-color: #FFFACD;
+     width: 33%; 
+     margin-bottom: 1cm}
+
+ </style>
+
+{% endblock %}
+ 
