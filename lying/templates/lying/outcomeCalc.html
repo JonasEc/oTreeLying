@@ -1,0 +1,15 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree_tags %}
+
+
+{% block title %}
+Calculator Results
+{% endblock %}
+
+{% block content %}
+
+<p> The sum of your throws is: <b> {{result}}</b>  </p>
+
+    {% next_button %}
+
+{% endblock %}

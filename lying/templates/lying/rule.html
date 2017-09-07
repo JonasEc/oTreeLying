@@ -9,13 +9,8 @@ What is the sum of your dice throws?
 {% block content %}
 
 
-<p> Please report the exact sum of your ten dice throws below:</p>
 
-{% formfield player.report with label="The sum of my ten dice throws is"  %}
-
-<p> (If you haven't thrown the dice yet or have no dice available to you right now, feel free to use <a href={{Constants.link}} target="_blank"> this website</a>. If you like, you can experiment with the website to see that it produces a fair dice throw - but remember to report the results of your first throw!)</p> 
-
-<p> Recall that your payment will depend on your report in the following way: </p>
+<p> In this round, your report will result in a payment according to this rule: </p>
 
  <table class="table1" align = "center">
   <tr>
@@ -47,12 +42,6 @@ What is the sum of your dice throws?
 </table> 
 {% endif %}
 
-<div class = "spacer"> </div>
-
-<p> What is the MEDIAN sum YOU BELIEVE others (excluding you) will have thrown when they saw this payment rule? </p>
-	
-    {% formfield player.belief with label="I think the median of all other workers' throws is"  %}
-
 
     {% next_button %}
 
@@ -81,10 +70,6 @@ What is the sum of your dice throws?
      td.colA { width: 34%;}
      td.colB { width: 16%; text-align:right;}
    }
-
-  div.spacer {
-    margin-bottom: 2cm
-  }
 
  </style>
 

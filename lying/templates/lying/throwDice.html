@@ -1,0 +1,51 @@
+{% extends "global/Page.html" %}
+{% load staticfiles otree_tags %}
+{% load mathfilters %}
+
+{% block title %}
+Throw {{Constants.numberOfDice}} dice now!
+{% endblock %}
+
+{% block content %}
+
+<p> Please throw <b>{{Constants.numberOfDice}} dice</b> now. You can either throw one die ten times, recording the results for each throw, and add the results up at the end, or throw one set of ten dice at once. </p>
+
+<p> If you have no dice available to you right now, feel free to use <a href={{Constants.link}} target="_blank"> this website</a>. If you like, you can experiment with the website to see that it produces a fair dice throw - but remember to report the results of your first throw on the next page!</p>
+
+
+<p> If you don't want to calculate the sum of the throws in your head or on paper, feel free to use a calculator or the below fields. Just add the number of eyes for each dice and it will tell you the total sum of your throw on the next page. </p>
+
+
+
+<table class="table table-striped">
+ <tr> <th>Calculator</th><th> </th></tr>
+ {% for field in form %}
+  <tr>
+    <td>
+      {{ field.label_tag }}
+      {{ field.errors }}
+    </td>
+    <td><input type="number" name="{{ field.html_name}}"></td>
+  </tr>
+  {% endfor %}
+    </table>
+
+
+  
+
+    {% next_button %}
+
+{% endblock %}
+
+{% block styles %}
+
+<style type="text/css">
+ table {
+     margin-top: 2cm;
+     width: 100%;
+ }
+
+
+ </style>
+
+ {% endblock %}

@@ -42,6 +42,10 @@ class Constants(BaseConstants):
 	numberunderstandingquestions = 5
 	numberOfDice = 10
 
+	First = True
+
+	link = "https://www.random.org/dice/?num=10"
+
 ### Money
 	HIT = c(2)
 	maxBonus = c(4)
@@ -91,14 +95,17 @@ class Group(BaseGroup):
 
 class Player(BasePlayer):
 ####### QUIZZ 
-	truefalse1 = models.PositiveIntegerField(verbose_name="How many of your decisions, at most, will count for payment?")
-	truefalse2 = models.BooleanField(choices=[[1, 'True'],[0, 'False']],widget=widgets.RadioSelect(),verbose_name="I can report any number ")
-	truefalse3 = models.BooleanField(choices=[[1, 'True'],[0, 'False']],widget=widgets.RadioSelect(),verbose_name="")
-	truefalse4 = models.BooleanField(choices=[[1, 'True'],[0, 'False']],widget=widgets.RadioSelect(),verbose_name="")
-	truefalse5 = models.BooleanField(choices=[[1, 'True'],[0, 'False']],widget=widgets.RadioSelect(),verbose_name="")
+	truefalse1 = models.PositiveIntegerField(verbose_name="How many of your decisions, will count for your payment?")
+	truefalse2 = models.BooleanField(choices=[[1, 'True'],[0, 'False']],widget=widgets.RadioSelect(),verbose_name="I can report any number between 10 and 60.")
+	truefalse3 = models.BooleanField(choices=[[1, 'True'],[0, 'False']],widget=widgets.RadioSelect(),verbose_name="The computer selects a completeely random round for payment.")
+	truefalse4 = models.PositiveIntegerField(verbose_name="What is the median of {11, 3, 7, 26, 2, 66, 143, 21, 12}?")
+	truefalse5 = models.BooleanField(choices=[[1, 'True'],[0, 'False']],widget=widgets.RadioSelect(),verbose_name="I need to record each throw and multiply them together.")
 	
 
 ######## ACTUAL DATA COLLECTED
+	
+	sumOfThrows = models.PositiveIntegerField()
+
 	report = models.PositiveIntegerField(min=Constants.numberOfDice,max=Constants.numberOfDice*6)
 
 	belief = models.PositiveIntegerField(min=Constants.numberOfDice,max=Constants.numberOfDice*6)
@@ -168,3 +175,7 @@ class Player(BasePlayer):
 		self.totalPayoff = sum([p.payoff for p in self.in_all_rounds()])
 		return self.totalPayoff
 
+
+
+for die in range(1,Constants.numberOfDice+1):
+	Player.add_to_class("die{}".format(die), models.PositiveIntegerField(default = None, blank =True, min=1,max=6,verbose_name=("Die" + " " + str(die))))
