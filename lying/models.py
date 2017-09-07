@@ -34,43 +34,57 @@ class Constants(BaseConstants):
 ### Base constants
 	name_in_url = 'Experiment'
 	players_per_group = None
-	num_rounds = 1
+	num_rounds = 4
 
 ### TREATMENT:
-	manySteps = True
-	equalSpacing = True
+	# manySteps = True
+	# equalSpacing = True
 	numberunderstandingquestions = 5
 	numberOfDice = 10
 
 ### Money
 	HIT = c(2)
 	maxBonus = c(4)
+	extraBonus = c(2)
 
 
 ## THRESHOLDS ARE UP TO AND INCLUDING!!!! NEED TO B E A T THE THRESHOLD TO GET HIGHER PRIZE
 
-	if equalSpacing == True:
-		thresholds = [20, 30, 40, 50]
-	else:
-		# with open('lying/probs.csv') as f:
-		# 	probs = csv.DictReader(f)
+	thresholdsES = [20, 30, 40, 50]
+	thresholdsRS = [30,33,36,39]
+	thresholdsSB = [39]
+	thresholdBonus = 60
 
-		# 	counter = 1
-		# 	cumsum = 0
-		# 	thresholds = []
-		# 	for row in probs:
-		# 		cumsum += float(row["prob"])
-		# 		if cumsum > counter/5:
-		# 			thresholds.append(row["throw"])
-		# 			counter += 1
+	treatmentDict = {1:thresholdsES, 2:thresholdsRS, 3: thresholdsSB, 4: thresholdsES}
+	# if equalSpacing == True:
+	# 	thresholds = [20, 30, 40, 50]
+	# else:
+	# 	# with open('lying/probs.csv') as f:
+	# 	# 	probs = csv.DictReader(f)
 
-		thresholds = [30,33,36,39]
+	# 	# 	counter = 1
+	# 	# 	cumsum = 0
+	# 	# 	thresholds = []
+	# 	# 	for row in probs:
+	# 	# 		cumsum += float(row["prob"])
+	# 	# 		if cumsum > counter/5:
+	# 	# 			thresholds.append(row["throw"])
+	# 	# 			counter += 1
+
+	# 	thresholds = [30,33,36,39]
 
 #	paymentDict = {thresholds[k] : k/maxBonus for k in range(4)}
 
 class Subsession(BaseSubsession):
-	pass
-
+	def before_session_starts(self):
+	### randomize to treatments
+		for player in self.get_players():
+			allocation = [1, 2, 3, 4]
+			allocation = np.random.permutation(allocation)
+			player.participant.vars['allocation'] = list(allocation)
+	## and the payment round
+			payment = random.randint(1,4)
+			player.participant.vars["paymentRound"] = payment
 
 class Group(BaseGroup):
 	pass
@@ -102,25 +116,55 @@ class Player(BasePlayer):
 	income = models.CurrencyField(verbose_name="What is your household income?")
 
 
-	totalPayoff = models.CurrencyField()
+
+
+	# def set_threshold(self):
+	# 	alloc = self.participant.vars.get("allocation")
+	# 	thresholds = Constants.TreatmentDic[alloc[self.round_number-1]]
+	# 	if alloc[self.round_number] == 4:
+	# 		self.bonusThresh = Constants.thresholdBonus
+	# 	# else:
+	# 	# 	self.bonusThresh = False
+	# 	return thresholds#, self.bonusThresh
 
 ### SET PAYOFF
-	def set_payoffs(self):
-		if self.report <= Constants.thresholds[0]:
-			bonus = c(0)
-		elif self.report <= Constants.thresholds[1] and self.report > Constants.thresholds[0]:
-			bonus = Constants.maxBonus/4
-		elif self.report <= Constants.thresholds[2] and self.report > Constants.thresholds[1]:
-			bonus = 2*Constants.maxBonus/4
-		elif self.report <= Constants.thresholds[3] and self.report > Constants.thresholds[2]:
-			bonus = 3*Constants.maxBonus/4
-		elif self.report <= self.report > Constants.thresholds[3]:
-			bonus = 4*Constants.maxBonus/4
+	totalPayoff = models.CurrencyField()
 
-		self.payoff = bonus	
-		self.totalPayoff = bonus + Constants.HIT								
+	def set_payoffs(self):
+		if self.participant.vars.get("paymentRound") == self.round_number:
+			alloc = self.participant.vars.get("allocation")
+			thresholds = Constants.treatmentDict[alloc[self.round_number-1]]
+			if self.participant.vars.get("allocation") in [1,2,4]:
+				if self.report <= thresholds[0]:
+					bonus = c(0)
+				elif self.report <= thresholds[1] and self.report > thresholds[0]:
+					bonus = Constants.maxBonus/4
+				elif self.report <= thresholds[2] and self.report > thresholds[1]:
+					bonus = 2*Constants.maxBonus/4
+				elif self.report <= thresholds[3] and self.report > thresholds[2]:
+					bonus = 3*Constants.maxBonus/4
+				elif self.report <= self.report > thresholds[3]:
+					bonus = 4*Constants.maxBonus/4
+			else:
+				if self.report <= thresholds[0]:
+					bonus = c(0)
+				elif self.report > thresholds[0]:
+					bonus = Constants.maxBonus
+
+			if self.participant.vars.get("allocation") == 4 and self.report >= Constants.thresholdBonus:
+				bonusExtra = Constants.bonusExtra
+			else:
+				bonusExtra = c(0)
+
+			self.payoff = bonus + bonusExtra	
+			
+		else:	
+			self.payoff = c(0)
+
+
 		return self.payoff
 
-
-
+	def set_total_payoff(self):
+		self.totalPayoff = sum([p.payoff for p in self.in_all_rounds()])
+		return self.totalPayoff
 

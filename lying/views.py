@@ -47,7 +47,8 @@ class quizz(Page):
 		elif summand == 1:
 			summand = 0
 			return 'Almost there! You just got one question wrong!'
-
+		
+		
 
 #### MAIN PAGES
 
@@ -55,9 +56,16 @@ class report(Page):
 	form_model = models.Player 
 	form_fields = ['report', 'belief']
 	def vars_for_template(self):
-		return {"BonusShare": Constants.maxBonus/len(Constants.thresholds)}
+		alloc = self.player.participant.vars.get("allocation")
+		threshold = Constants.treatmentDict[alloc[self.round_number-1]]
+		if alloc[self.round_number-1] == 4:
+			bonusThresh = True
+		else:
+			bonusThresh = False 
+		return {"BonusShare": Constants.maxBonus/len(threshold), "thresholds": threshold, "BonusThresh": bonusThresh }
 	
-
+	def before_next_page(self):
+		self.player.set_payoffs()
 
 
 ##### SURVEY PAGES
@@ -77,28 +85,29 @@ class survey2(Page):
 	form_model = models.Player
 	form_fields = [ 'sex', 'age', 'school', 'income']
 
-	def before_next_page(self):
-		self.player.set_payoffs()
+
+
 
 class payment(Page):
 	def is_displayed(self):
 		return self.round_number == Constants.num_rounds
 	def vars_for_template(self):
-		if self.player.payoff > c(0):
+		total = self.player.set_total_payoff()
+		if total > c(0):
 			postivieBonus = True
 		else:
-			positiveBonus = False
+			postivieBonus = False
 
-		return {"payoff": self.player.payoff, "paymentTotal": self.player.totalPayoff, "postivieBonus": postivieBonus}
+		return {"payoff": self.player.payoff, "paymentTotal": self.player.totalPayoff + Constants.HIT, "postivieBonus": postivieBonus}
 
 
 
 
 page_sequence = [
-	welcome,
-	IRB,
-	instructions,
-	quizz,
+	# welcome,
+	# IRB,
+	# instructions,
+	# quizz,
 	report,
 	survey1,
 	survey2,

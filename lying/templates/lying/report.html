@@ -19,22 +19,33 @@ What is the sum of your dice throws?
 
  <table class="table1" align = "center">
   <tr>
-    <th>Sum of Dice</th>
-    <th>Bonus</th>
+    <th class = "colA">Sum of Dice Reported</th>
+    <th class = "colB"> Bonus</th>
   </tr>
-  {% for i in Constants.thresholds%}  <tr>
+  {% for i in thresholds%}  <tr>
     {% if not forloop.last %} 
-    <td> Sum smaller than or equal to  {{i}}: </td>
-    <td>{{forloop.counter0|mul:BonusShare}} </td>
+    <td class = "colA"> <b>Smaller</b> than or equal to  <b>{{i}}</b>: </td>
+    <td class = "colB">{{forloop.counter0|mul:BonusShare}} </td>
    {% else %} 
-     <td> Sum strictly larger than {{i}}: </td>
-     <td>{{forloop.counter|mul:BonusShare}} </td>
+     <td class = "colA"> Strictly <b>larger</b> than <b>{{i}}</b>: </td>
+     <td class = "colB">{{forloop.counter|mul:BonusShare}} </td>
    {% endif %}
   </tr>
   {% endfor %}
 </table> 
 
-
+{% if BonusThresh %}
+ <table class="table2" align = "center">
+  <tr>
+    <th class = "colA">Sum of Dice</th>
+    <th class = "colB">&emsp;Additional Bonus</th>
+  </tr>
+  <tr>
+    <td class = "colA"> Sum <b>equal</b> to  <b>{{Constants.thresholdBonus}}</b>: </td>
+    <td class = "colB">&emsp;{{Constants.extraBonus}} </td>
+  </tr>
+</table> 
+{% endif %}
 
 <p> What is the MEDIAN sum YOU BELIEVE others (excluding you) will have thrown? </p>
 	
@@ -52,8 +63,22 @@ What is the sum of your dice throws?
  table.table1 {
      border: 1px solid black;
      background-color: #FFFACD;
-     width: 33%; 
-     margin-bottom: 1cm}
+     width: 50%;
+     th.colA { width: 34%;}
+     th.colB { width: 16%; text-align:right;}
+     td.colA { width: 34%; }
+     td.colB { width: 16%; text-align:right;}
+ }
+
+ table.table2 {
+     border: 1px solid black;
+     background-color: #AFEEEE;
+     width: 50%; 
+     th.colA { width: 34%;}
+     th.colB { width: 16%; text-align:right;}
+     td.colA { width: 34%;}
+     td.colB { width: 16%; text-align:right;}
+   }
 
  </style>
 
